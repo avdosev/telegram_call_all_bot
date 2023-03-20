@@ -70,9 +70,6 @@ async def cmd_groups(msg: types.Message):
 
 
 async def cmd_create(msg: types.Message):
-    if msg.from_user.username != 'avdosev':
-        await msg.reply('ты не некитосик')
-        return
     command, text = msg.get_full_command()
     args = text.split()
     group_name = args[0]
@@ -80,7 +77,7 @@ async def cmd_create(msg: types.Message):
 
     if len(group_name) and len(values):
         add_groups(msg.chat.id, group_name, values)
-        # msg.bot.set_chat_menu_button
+        await msg.reply('группа создана')
         
 
 
