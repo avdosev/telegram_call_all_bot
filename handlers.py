@@ -95,7 +95,7 @@ async def message_listener(msg: types.Message):
     
     groups = get_groups(msg.chat.id)
     for group_name in groups:
-        if ('@'+group_name) in msg.text:
+        if ('@'+group_name.lower()) in msg.text.lower():
             await do_call(msg, group_name)
             
 
