@@ -3,6 +3,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import CommandStart, CommandHelp
 from helpers import *
 
+
 def setup(dp: Dispatcher):
     dp.register_message_handler(bot_help, CommandHelp())
     dp.register_message_handler(cmd_call, commands=['call'])
@@ -17,12 +18,12 @@ async def bot_help(msg: types.Message):
         '/call \- вызвать группу',
         '/groups \- посмотреть группы',
         '/create \- создать группу',
-
     ]
     groups = get_groups(msg.chat.id)
     res = []
     for key, items in sorted(groups.items(), key=lambda x: x[0]):
-        res.append('/'+key + ' \- Призвать ' + group_to_str(items, not_call=True, sep=', '))
+        res.append('/'+key + ' \- Призвать ' +
+                   group_to_str(items, not_call=True, sep=', '))
 
     text += res
 
@@ -33,7 +34,7 @@ async def cmd_call(msg: types.Message):
     groups = get_groups(msg.chat.id)
 
     command, group_name = msg.get_full_command()
-    
+
     print('group name:', group_name)
     if group_name in groups:
         await msg.reply(group_to_str(groups[group_name]))
@@ -46,7 +47,7 @@ def get_group(chat_id, group_name):
     if group_name in groups:
         return groups[group_name]
     return None
-    
+
 
 def group_to_str(group: list[str], not_call=False, sep=' '):
     res = []
@@ -57,12 +58,13 @@ def group_to_str(group: list[str], not_call=False, sep=' '):
             res.append('@'+username)
     return sep.join(res).replace('_', '\_')
 
+
 async def cmd_groups(msg: types.Message):
     groups = get_groups(msg.chat.id)
     res = []
     for key, items in sorted(groups.items(), key=lambda x: x[0]):
         res.append(key + ' \- ' + group_to_str(items, not_call=True))
-    
+
     if len(res):
         await msg.reply('\n'.join(res))
     else:
@@ -78,7 +80,6 @@ async def cmd_create(msg: types.Message):
     if len(group_name) and len(values):
         add_groups(msg.chat.id, group_name, values)
         await msg.reply('группа создана')
-        
 
 
 async def message_listener(msg: types.Message):
@@ -92,12 +93,12 @@ async def message_listener(msg: types.Message):
             else:
                 await msg.reply(group_to_str(group))
             return
-    
+
     groups = get_groups(msg.chat.id)
     for group_name in groups:
         if ('@'+group_name.lower()) in msg.text.lower():
             await do_call(msg, group_name)
-            
+
 
 async def do_call(msg: types.Message, group_name):
     group = get_group(msg.chat.id, group_name)
@@ -107,4 +108,3 @@ async def do_call(msg: types.Message, group_name):
 
 def exclude_msg_author(group, user: types.User):
     return [username for username in group if user.username != username]
-
