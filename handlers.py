@@ -80,16 +80,13 @@ async def cmd_create(msg: types.Message):
 
     if len(group_name) and len(values):
         add_groups(msg.chat.id, group_name, values)
-        msg.bot.set_chat_menu_button
+        # msg.bot.set_chat_menu_button
         
 
 
 async def message_listener(msg: types.Message):
-    print(msg)
     command = msg.get_command()
-    if command is None:
-        return
-    else:
+    if command is not None:
         group_name = command[1:]
         group = get_group(msg.chat.id, group_name)
         if group:
@@ -97,6 +94,20 @@ async def message_listener(msg: types.Message):
                 await msg.reply_to_message.reply(group_to_str(group))
             else:
                 await msg.reply(group_to_str(group))
-        
+            return
     
+    groups = get_groups(msg.chat.id)
+    for group_name in groups:
+        if ('@'+group_name) in msg.text:
+            await do_call(msg, group_name)
+            
+
+async def do_call(msg: types.Message, group_name):
+    group = get_group(msg.chat.id, group_name)
+    group = exclude_msg_author(group, msg.from_user)
+    await msg.reply(group_to_str(group))
+
+
+def exclude_msg_author(group, user: types.User):
+    return [username for username in group if user.username != username]
 
