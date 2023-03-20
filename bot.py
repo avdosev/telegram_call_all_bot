@@ -22,4 +22,4 @@ if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     bot = Bot(bot_token, parse_mode=ParseMode.MARKDOWN_V2, validate_token=True)
     dp = Dispatcher(bot)
-    executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
+    executor.start_polling(dp, on_startup=on_startup)
