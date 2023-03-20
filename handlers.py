@@ -77,6 +77,12 @@ async def cmd_create(msg: types.Message):
     group_name = args[0]
     values = args[1:]
 
+    for i in range(len(values)):
+        value = values[i]
+        if value.startswith('@'):
+            value = value[1:]
+            values[i] = value
+
     if len(group_name) and len(values):
         add_groups(msg.chat.id, group_name, values)
         await msg.reply('группа создана')
