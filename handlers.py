@@ -61,7 +61,7 @@ async def cmd_groups(msg: types.Message):
     groups = get_groups(msg.chat.id)
     res = []
     for key, items in sorted(groups.items(), key=lambda x: x[0]):
-        res.append(key + ' \- ' + group_to_str(items))
+        res.append(key + ' \- ' + group_to_str(items, not_call=True))
     
     if len(res):
         await msg.reply('\n'.join(res))
