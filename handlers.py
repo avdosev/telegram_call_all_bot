@@ -94,16 +94,15 @@ async def message_listener(msg: types.Message):
         group_name = command[1:]
         group = get_group(msg.chat.id, group_name)
         if group:
-            if msg.reply_to_message:
-                await msg.reply_to_message.reply(group_to_str(group))
-            else:
-                await msg.reply(group_to_str(group))
+            message = msg.reply_to_message if msg.reply_to_message else msg 
+            await do_call(message, group_name)
             return
 
     groups = get_groups(msg.chat.id)
     for group_name in groups:
         if ('@'+group_name.lower()) in msg.text.lower():
-            await do_call(msg, group_name)
+            message = msg.reply_to_message if msg.reply_to_message else msg 
+            await do_call(message, group_name)
 
 
 async def do_call(msg: types.Message, group_name):
