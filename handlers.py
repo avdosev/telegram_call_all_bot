@@ -7,6 +7,7 @@ from helpers import *
 def setup(dp: Dispatcher):
     dp.register_message_handler(bot_help, CommandHelp())
     dp.register_message_handler(cmd_call, commands=['call'])
+    dp.register_message_handler(version_call, commands=['version'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(message_listener)
@@ -18,6 +19,7 @@ async def bot_help(msg: types.Message):
         '/call \- вызвать группу',
         '/groups \- посмотреть группы',
         '/create \- создать группу',
+        '/version \- узнать версию',
     ]
     groups = get_groups(msg.chat.id)
     res = []
@@ -40,6 +42,10 @@ async def cmd_call(msg: types.Message):
         await msg.reply(group_to_str(groups[group_name]))
     else:
         await msg.reply('Такой группы пользователей не существует')
+
+
+async def version_call(msg: types.Message):
+    await msg.reply('0.0.1')
 
 
 def get_group(chat_id, group_name):
@@ -99,8 +105,10 @@ async def message_listener(msg: types.Message):
             return
 
     groups = get_groups(msg.chat.id)
+    msg_text = msg.caption if msg.text is None else msg.text
+    msg_text = msg_text.lower()
     for group_name in groups:
-        if ('@'+group_name.lower()) in msg.text.lower():
+        if ('@'+group_name.lower()) in msg_text:
             message = msg.reply_to_message if msg.reply_to_message else msg 
             await do_call(message, group_name)
 
