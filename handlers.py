@@ -8,6 +8,7 @@ import subprocess
 def setup(dp: Dispatcher):
     dp.register_message_handler(bot_help, CommandHelp())
     dp.register_message_handler(cmd_call, commands=['call'])
+    dp.register_message_handler(ask_call, commands=['ask'])
     dp.register_message_handler(version_call, commands=['version'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
@@ -22,6 +23,7 @@ async def bot_help(msg: types.Message):
         '/groups \- посмотреть группы',
         '/create \- создать группу',
         '/version \- узнать версию',
+        '/ask \- спросить',
     ]
     groups = get_groups(msg.chat.id)
     res = []
@@ -112,11 +114,15 @@ async def message_listener(msg: types.Message):
 
     msg_text = msg.caption if msg.text is None else msg.text
     if msg_text is None:
-        print(msg_text)
+        print(msg)
         return
 
     groups = get_groups(msg.chat.id)
     msg_text = msg_text.lower()
+    
+    if 'ты лох' in msg_text:
+        await msg.reply('нет, ты лох')
+    
     for group_name in groups:
         if ('@'+group_name.lower()) in msg_text:
             message = msg.reply_to_message if msg.reply_to_message else msg
@@ -131,3 +137,6 @@ async def do_call(msg: types.Message, group_name):
 
 def exclude_msg_author(group, user: types.User):
     return [username for username in group if user.username != username]
+
+async def ask_call(msg: types.Message):
+    await msg.reply('пока не ебу')
