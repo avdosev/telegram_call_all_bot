@@ -2,6 +2,7 @@ from aiogram import Dispatcher
 from aiogram import types
 from aiogram.dispatcher.filters import CommandStart, CommandHelp
 from helpers import *
+import subprocess
 
 
 def setup(dp: Dispatcher):
@@ -10,7 +11,8 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(version_call, commands=['version'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
-    dp.register_message_handler(message_listener, content_types=types.ContentTypes.ANY)
+    dp.register_message_handler(
+        message_listener, content_types=types.ContentTypes.ANY)
 
 
 async def bot_help(msg: types.Message):
@@ -45,7 +47,11 @@ async def cmd_call(msg: types.Message):
 
 
 async def version_call(msg: types.Message):
-    await msg.reply('0.0.2'.replace('.', '\.'))
+    result = subprocess.Popen(
+        'git log -1 --pretty="by *%cN*, %ar%ntitle: %Bcommit: _%H_"',
+        shell=True, stdout=subprocess.PIPE).stdout.read()
+    result = result.decode('utf-8', errors='ignore')
+    await msg.reply(result.replace('.', '\.'))
 
 
 def get_group(chat_id, group_name):
@@ -100,7 +106,7 @@ async def message_listener(msg: types.Message):
         group_name = command[1:]
         group = get_group(msg.chat.id, group_name)
         if group:
-            message = msg.reply_to_message if msg.reply_to_message else msg 
+            message = msg.reply_to_message if msg.reply_to_message else msg
             await do_call(message, group_name)
             return
 
@@ -108,12 +114,12 @@ async def message_listener(msg: types.Message):
     if msg_text is None:
         print(msg_text)
         return
-    
+
     groups = get_groups(msg.chat.id)
     msg_text = msg_text.lower()
     for group_name in groups:
         if ('@'+group_name.lower()) in msg_text:
-            message = msg.reply_to_message if msg.reply_to_message else msg 
+            message = msg.reply_to_message if msg.reply_to_message else msg
             await do_call(message, group_name)
 
 
