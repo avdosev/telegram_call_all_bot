@@ -3,6 +3,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import CommandStart, CommandHelp
 from helpers import *
 import subprocess
+from aiogram.types import ParseMode
 
 try:
     import chat_gpt_handlers
@@ -56,10 +57,10 @@ async def cmd_call(msg: types.Message):
 
 async def version_call(msg: types.Message):
     result = subprocess.Popen(
-        'git log -1 --pretty="by *%cN*, %ar%ntitle: %Bcommit: _%H_"',
+        'git log -1 --pretty="by <b>%cN</b>, %ar%ntitle: %Bcommit: <i>%H</i>"',
         shell=True, stdout=subprocess.PIPE).stdout.read()
     result = result.decode('utf-8', errors='ignore')
-    await msg.reply(prepare_text(result))
+    await msg.reply(result, ParseMode.HTML)
 
 
 def get_group(chat_id, group_name):
@@ -151,7 +152,7 @@ async def ask_call(msg: types.Message):
     
     command, text = msg.get_full_command()
 
-    await msg.reply(prepare_text(chat_gpt_handlers.get_answer(text)))
+    await msg.reply(chat_gpt_handlers.get_answer(text), parse_mode=ParseMode.MARKDOWN)
 
 
 def prepare_text(text: str):
