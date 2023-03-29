@@ -59,7 +59,7 @@ async def version_call(msg: types.Message):
         'git log -1 --pretty="by *%cN*, %ar%ntitle: %Bcommit: _%H_"',
         shell=True, stdout=subprocess.PIPE).stdout.read()
     result = result.decode('utf-8', errors='ignore')
-    await msg.reply(result.replace('.', '\.'))
+    await msg.reply(prepare_text(result))
 
 
 def get_group(chat_id, group_name):
