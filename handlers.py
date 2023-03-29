@@ -152,7 +152,18 @@ async def ask_call(msg: types.Message):
     
     command, text = msg.get_full_command()
 
-    await msg.reply(chat_gpt_handlers.get_answer(text), parse_mode=ParseMode.MARKDOWN)
+    context = []
+    if msg.reply_to_message:
+        context_msg = msg.reply_to_message
+        role = 'assistant' if context_msg.from_user.is_bot else 'user'
+        context_text = context_msg.caption if context_msg.text is None else context_msg.text
+        context = chat_gpt_handlers.simple_context(context_text, role=role)
+        print(context)
+
+    try:
+        await msg.reply(chat_gpt_handlers.get_answer(text, context=context), parse_mode=ParseMode.MARKDOWN)
+    except:
+        await msg.reply('я завершился с ошибкой, попробуй ещё раз')
 
 
 def prepare_text(text: str):

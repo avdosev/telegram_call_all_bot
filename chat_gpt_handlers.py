@@ -15,5 +15,5 @@ def get_answer(query, context=[]):
     return message
 
 
-def simple_context(text):
-    return [{'role': 'assistant', 'content': text}]
+def simple_context(text, role='assistant'):
+    return [{'role': role, 'content': text}]
