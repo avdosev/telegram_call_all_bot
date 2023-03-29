@@ -4,11 +4,11 @@ from aiogram.dispatcher.filters import CommandStart, CommandHelp
 from helpers import *
 import subprocess
 
-# try:
-import chat_gpt_handlers
-allow_openai = True
-# except:
-#     allow_openai = False
+try:
+    import chat_gpt_handlers
+    allow_openai = True
+except:
+    allow_openai = False
 
 
 def setup(dp: Dispatcher):
