@@ -4,6 +4,12 @@ from aiogram.dispatcher.filters import CommandStart, CommandHelp
 from helpers import *
 import subprocess
 
+# try:
+import chat_gpt_handlers
+allow_openai = True
+# except:
+#     allow_openai = False
+
 
 def setup(dp: Dispatcher):
     dp.register_message_handler(bot_help, CommandHelp())
@@ -139,4 +145,14 @@ def exclude_msg_author(group, user: types.User):
     return [username for username in group if user.username != username]
 
 async def ask_call(msg: types.Message):
-    await msg.reply('пока не ебу')
+    if not allow_openai:
+        await msg.reply('пока не ебу')
+        return
+    
+    command, text = msg.get_full_command()
+
+    await msg.reply(prepare_text(chat_gpt_handlers.get_answer(text)))
+
+
+def prepare_text(text: str):
+    return text.replace('-', '\-').replace('_', '\_').replace('.', '\.')
