@@ -161,9 +161,12 @@ async def ask_call(msg: types.Message):
         print(context)
 
     try:
-        await msg.reply(chat_gpt_handlers.get_answer(text, context=context), parse_mode=ParseMode.MARKDOWN)
-    except:
+        response = chat_gpt_handlers.get_answer(text, context=context)
+        print(response)
+        await msg.reply(response, parse_mode=ParseMode.MARKDOWN)
+    except Exception as err:
         await msg.reply('я завершился с ошибкой, попробуй ещё раз')
+        await msg.answer(prepare_text(str(err)))
 
 
 def prepare_text(text: str):
