@@ -138,6 +138,9 @@ async def message_listener(msg: types.Message):
             groups_to_call.append(group_name)
 
 
+    if not len(groups_to_call):
+        return
+
     message = msg.reply_to_message if msg.reply_to_message else msg
     group = list(
         reduce(
@@ -146,6 +149,7 @@ async def message_listener(msg: types.Message):
             set()
         )
     )
+    
     await do_call_group(message, group)
 
 
