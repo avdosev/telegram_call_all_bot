@@ -131,6 +131,9 @@ async def message_listener(msg: types.Message):
     
     if 'ты лох' in msg_text:
         await msg.reply('нет, ты лох')
+
+    if 'некит лох' in msg_text:
+        await msg.reply('сам лох')
     
     groups_to_call = []
     for group_name in groups:
