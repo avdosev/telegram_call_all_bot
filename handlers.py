@@ -4,6 +4,8 @@ from aiogram.dispatcher.filters import CommandStart, CommandHelp
 from helpers import *
 import subprocess
 from aiogram.types import ParseMode
+import operator
+from functools import reduce, partial
 
 try:
     import chat_gpt_handlers
@@ -72,7 +74,7 @@ def get_group(chat_id, group_name):
 
 def group_to_str(group: list[str], not_call=False, sep=' '):
     res = []
-    for username in group:
+    for username in sorted(group):
         if username.startswith('@') or not_call:
             res.append(username)
         else:
@@ -130,15 +132,31 @@ async def message_listener(msg: types.Message):
     if 'ты лох' in msg_text:
         await msg.reply('нет, ты лох')
     
+    groups_to_call = []
     for group_name in groups:
         if ('@'+group_name.lower()) in msg_text:
-            message = msg.reply_to_message if msg.reply_to_message else msg
-            await do_call(message, group_name)
+            groups_to_call.append(group_name)
+
+
+    message = msg.reply_to_message if msg.reply_to_message else msg
+    group = list(
+        reduce(
+            operator.or_, 
+            map(lambda x: set(get_group(message.chat.id, x)), groups_to_call),
+            set()
+        )
+    )
+    await do_call_group(message, group)
+
 
 
 async def do_call(msg: types.Message, group_name):
     group = get_group(msg.chat.id, group_name)
+    await do_call_group(msg, group)
+
+async def do_call_group(msg: types.Message, group):
     group = exclude_msg_author(group, msg.from_user)
+    print('Group: ', group_to_str(group))
     await msg.reply(group_to_str(group))
 
 
