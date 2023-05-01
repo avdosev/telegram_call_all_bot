@@ -141,11 +141,11 @@ async def message_listener(msg: types.Message):
     if 'ты обосрался' in msg_text:
         await msg.reply('пока куча дерьма только у тебя в штанах')
 
-    if 'ладно' == msg_text and message.from_user.username == 'unterumarmung':
+    if 'ладно' == msg_text and msg.from_user.username == 'unterumarmung':
         await msg.reply('ебать ты лох, а гонора то было')
     
     if 'я лох' in msg_text:
-        if message.from_user.username == 'unterumarmung':
+        if msg.from_user.username == 'unterumarmung':
             await msg.reply('да, ты лох')
         else:
             await msg.reply('нет, ты пупсик')
