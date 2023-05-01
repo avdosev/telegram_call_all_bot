@@ -156,6 +156,11 @@ async def do_call(msg: types.Message, group_name):
 
 async def do_call_group(msg: types.Message, group):
     group = exclude_msg_author(group, msg.from_user)
+
+    if not len(group):
+        await msg.reply('Ты ни кого не призвал, дебилыч')
+        return
+
     print('Group: ', group_to_str(group))
     await msg.reply(group_to_str(group))
 
