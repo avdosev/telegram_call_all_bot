@@ -135,7 +135,7 @@ async def message_listener(msg: types.Message):
     if 'некит лох' in msg_text:
         await msg.reply('сам лох')
 
-    if 'некит обосрался' in msg_text:
+    if 'некит обосрался' in msg_text or 'некит опять обосрался' in msg_text:
         await msg.reply('не обосрался, а провел внеплановую дефекацию')
 
     if 'ты обосрался' in msg_text:
