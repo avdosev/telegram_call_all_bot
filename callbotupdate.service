@@ -1,0 +1,16 @@
+[Unit]
+Description=CallBotUpdate
+After=syslog.target
+After=network.target
+After=callbot.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=~/dev/telegram_call_all_bot
+ExecStart=bash ~/dev/telegram_call_all_bot/updater.sh
+RestartSec=5m
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
