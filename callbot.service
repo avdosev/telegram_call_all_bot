@@ -6,8 +6,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=~/dev/telegram_call_all_bot
-ExecStart=/usr/bin/python3 ~/dev/telegram_call_all_bot/bot.py
+WorkingDirectory=/home/danya/dev/telegram_call_all_bot
+ExecStart=/usr/bin/python3 /home/danya/dev/telegram_call_all_bot/bot.py
 RestartSec=10
 Restart=always
  
