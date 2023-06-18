@@ -7,8 +7,8 @@ After=callbot.service
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/home/danya/dev/telegram_call_all_bot
-ExecStart=bash /home/danya/dev/telegram_call_all_bot/updater.sh
+WorkingDirectory=/home/avdosev/dev/telegram_call_all_bot
+ExecStart=bash /home/avdosev/dev/telegram_call_all_bot/updater.sh
 RestartSec=5m
 Restart=always
 

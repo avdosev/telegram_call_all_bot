@@ -23,6 +23,8 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(
         message_listener, content_types=types.ContentTypes.ANY)
+    dp.register_message_handler(
+        voice_listener, content_types=types.ContentTypes.VOICE)
 
 
 async def bot_help(msg: types.Message):
@@ -216,3 +218,7 @@ async def ask_call(msg: types.Message):
 
 def prepare_text(text: str):
     return text.replace('-', '\-').replace('_', '\_').replace('.', '\.')
+
+
+async def voice_listener(msg: types.Message):
+    pass
