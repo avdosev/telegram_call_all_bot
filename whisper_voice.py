@@ -3,7 +3,7 @@ import time
 
 whisper = Whisper(model_path="../whisper.cpp/models/ggml-small.bin", n_threads=4, strategy=1)
 
-def transcribe(voice):
+async def transcribe(voice):
     start = time.time()
     output = whisper.transcribe(voice, language='ru')
     end = time.time()
