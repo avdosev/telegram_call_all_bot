@@ -6,6 +6,8 @@ import subprocess
 from aiogram.types import ParseMode
 import operator
 from functools import reduce, partial
+import io
+import whisper_voice
 
 try:
     import chat_gpt_handlers
@@ -22,9 +24,9 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(
-        message_listener, content_types=types.ContentTypes.ANY)
-    dp.register_message_handler(
         voice_listener, content_types=types.ContentTypes.VOICE)
+    dp.register_message_handler(
+        message_listener, content_types=types.ContentTypes.ANY)
 
 
 async def bot_help(msg: types.Message):
@@ -221,4 +223,8 @@ def prepare_text(text: str):
 
 
 async def voice_listener(msg: types.Message):
-    pass
+    print(msg)
+    voice = io.BytesIO()
+    _ = await msg.voice.download(destination_file=voice)
+    text = whisper_voice.transcribe(voice)
+    await msg.answer('<b>' + msg.from_user.username + '</b>:<br/>' + text, ParseMode.HTML)
