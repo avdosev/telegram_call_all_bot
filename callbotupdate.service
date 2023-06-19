@@ -8,7 +8,7 @@ After=callbot.service
 Type=simple
 User=root
 WorkingDirectory=/home/avdosev/dev/telegram_call_all_bot
-ExecStart=bash /home/avdosev/dev/telegram_call_all_bot/updater.sh
+ExecStart=sudo bash /home/avdosev/dev/telegram_call_all_bot/updater.sh
 RestartSec=5m
 Restart=always
 
