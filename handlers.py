@@ -133,7 +133,7 @@ async def message_listener(msg: types.Message):
     groups = get_groups(msg.chat.id)
     msg_text = msg_text.lower()
     
-    if 'ты лох' in msg_text:
+    if 'ты лох' in msg_text or msg_text == 'лох':
         await msg.reply('нет, ты лох')
 
     if 'некит лох' in msg_text:
