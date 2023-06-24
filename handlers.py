@@ -225,7 +225,7 @@ def prepare_text(text: str):
 async def voice_listener(msg: types.Message):
     print(msg)
     voice = io.BytesIO()
-    _ = await msg.voice.download(destination_file=voice)
+    _ = await msg.voice.download(destination_file=voice, timeout=180)
     text = await whisper_voice.transcribe(voice)
     await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + text, ParseMode.HTML)
 
