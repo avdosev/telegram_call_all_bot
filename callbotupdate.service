@@ -8,9 +8,10 @@ After=callbot.service
 Type=simple
 User=root
 WorkingDirectory=/home/avdosev/dev/telegram_call_all_bot
-ExecStart=sudo bash /home/avdosev/dev/telegram_call_all_bot/updater.sh
+ExecStart=bash /home/avdosev/dev/telegram_call_all_bot/updater.sh
 RestartSec=5m
 Restart=always
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
 
 [Install]
 WantedBy=multi-user.target
