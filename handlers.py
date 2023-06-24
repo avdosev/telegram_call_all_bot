@@ -228,3 +228,4 @@ async def voice_listener(msg: types.Message):
     _ = await msg.voice.download(destination_file=voice)
     text = await whisper_voice.transcribe(voice)
     await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + text, ParseMode.HTML)
+
