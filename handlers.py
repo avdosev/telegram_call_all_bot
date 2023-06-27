@@ -1,14 +1,15 @@
 from aiogram import Dispatcher
 from aiogram import types
 from aiogram.dispatcher.filters import CommandStart, CommandHelp
+from action_sender import ChatActionSender
 from helpers import *
 import subprocess
 from aiogram.types import ParseMode
 import operator
 from functools import reduce, partial
 import io
+import asyncio
 import whisper_voice
-from aiogram.utils import ChatActionSender
 
 try:
     import chat_gpt_handlers
