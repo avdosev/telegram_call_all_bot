@@ -224,6 +224,7 @@ def prepare_text(text: str):
 
 async def voice_listener(msg: types.Message):
     print(msg)
+    await msg.answer_chat_action('typing')
     voice = io.BytesIO()
     _ = await msg.voice.download(destination_file=voice, timeout=180)
     text = await whisper_voice.transcribe(voice)
