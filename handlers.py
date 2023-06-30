@@ -156,6 +156,9 @@ async def message_listener(msg: types.Message):
         else:
             await msg.reply('нет, ты пупсик')
 
+    if '?' == msg_text:
+        await msg.reply('что тебе неясно, хуила?')
+
     groups_to_call = []
     for group_name in groups:
         if ('@'+group_name.lower()) in msg_text:
