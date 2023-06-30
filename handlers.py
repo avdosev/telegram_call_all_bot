@@ -158,6 +158,12 @@ async def message_listener(msg: types.Message):
 
     if '?' == msg_text:
         await msg.reply('что тебе неясно, хуила?')
+    
+    if '!' == msg_text:
+        await msg.reply('.')
+    
+    if 'извините' == msg_text:
+        await msg.reply('Рамзан Кадыров услышал тебя')
 
     groups_to_call = []
     for group_name in groups:
