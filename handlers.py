@@ -9,13 +9,16 @@ import operator
 from functools import reduce, partial
 import io
 import asyncio
-import whisper_voice
+# import whisper_voice
 
 try:
     import chat_gpt_handlers
     allow_openai = True
 except:
     allow_openai = False
+
+def random_action_needed():
+    return random_bool(0.1)
 
 
 def setup(dp: Dispatcher):
@@ -160,10 +163,22 @@ async def message_listener(msg: types.Message):
         await msg.reply('что тебе неясно, хуила?')
     
     if '!' == msg_text:
-        await msg.reply('.')
+        await msg.reply('\.')
     
     if 'извините' == msg_text:
         await msg.reply('Рамзан Кадыров услышал тебя')
+
+    if 'да' == msg_text:
+        if random_action_needed():
+            await msg.reply('пизда') 
+    
+    if 'нет' == msg_text:
+        if random_action_needed():
+            await msg.reply('пидора ответ') 
+    
+    if msg_text.endswith('300'):
+        if random_action_needed():
+            await msg.reply('отсоси у тракториста') 
 
     groups_to_call = []
     for group_name in groups:
