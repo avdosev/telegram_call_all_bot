@@ -9,7 +9,7 @@ import operator
 from functools import reduce, partial
 import io
 import asyncio
-# import whisper_voice
+import whisper_voice
 
 try:
     import chat_gpt_handlers
