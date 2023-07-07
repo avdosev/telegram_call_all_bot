@@ -18,7 +18,7 @@ except:
     allow_openai = False
 
 def random_action_needed():
-    return random_bool(0.1)
+    return random_bool(0.05)
 
 
 def setup(dp: Dispatcher):
