@@ -19,7 +19,7 @@ def transcribe_sync(voice, voice_id):
 
 
 lock = asyncio.Lock()
-async def transcribe(voice, *args, **kwargs):
+async def transcribe(voice, *args):
     loop = asyncio.get_running_loop()
     async with lock:    
-        return await loop.run_in_executor(executor, transcribe_sync, voice, *args, **kwargs)
+        return await loop.run_in_executor(executor, transcribe_sync, voice, *args)
