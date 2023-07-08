@@ -258,6 +258,6 @@ async def voice_listener(msg: types.Message):
     async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
-        text = await whisper_voice.transcribe(voice)
+        text = await whisper_voice.transcribe(voice, voice_id=msg.voice.file_id)
         await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + text, ParseMode.HTML)
 
