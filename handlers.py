@@ -31,6 +31,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(cmd_call, commands=['call'])
     dp.register_message_handler(ask_call, commands=['ask'])
     dp.register_message_handler(version_call, commands=['version'])
+    dp.register_message_handler(logs_call, commands=['logs'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(
@@ -77,6 +78,24 @@ async def version_call(msg: types.Message):
         shell=True, stdout=subprocess.PIPE).stdout.read()
     result = result.decode('utf-8', errors='ignore')
     await msg.reply(result, ParseMode.HTML)
+
+async def logs_call(msg: types.Message):
+    if msg.from_user.username not in {'avdosev', 'unterumarmung'}:
+        return
+    result = subprocess.Popen(
+        'tail -n 20 bot_logs.txt',
+        shell=True, stdout=subprocess.PIPE).stdout.read()
+    result = result.decode('utf-8', errors='ignore')
+
+    await msg.reply(logs_prepare(result), ParseMode.HTML)
+
+def logs_prepare(s: str) -> str:
+    lines = s.split('\n')
+    for i in indexes(lines):
+        if lines[i].startswith(tuple(str(i) for i in range(10))):
+            subsline = lines[i].split()
+            lines[i] = ' '.join([f'<b>{subsline[0]}</b>', *subsline[1:]])
+    return '\n'.join(lines)
 
 
 def get_group(chat_id, group_name):

@@ -33,3 +33,6 @@ def add_groups(chat_id, name, values):
 
 def random_bool(probability=0.5):
     return rnd.random() > (1-probability)
+
+def indexes(iterable):
+    return range(len(iterable))
