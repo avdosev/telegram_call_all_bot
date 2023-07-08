@@ -9,13 +9,18 @@ import operator
 from functools import reduce, partial
 import io
 import asyncio
-import whisper_voice
+import logging
 
 try:
     import chat_gpt_handlers
     allow_openai = True
 except:
     allow_openai = False
+
+try:
+    import whisper_voice
+except:
+    logging.warning('whisper not imported')
 
 def random_action_needed():
     return random_bool(0.05)
@@ -59,7 +64,7 @@ async def cmd_call(msg: types.Message):
 
     command, group_name = msg.get_full_command()
 
-    print('group name:', group_name)
+    logging.info('group name:', group_name)
     if group_name in groups:
         await msg.reply(group_to_str(groups[group_name]))
     else:
@@ -132,7 +137,7 @@ async def message_listener(msg: types.Message):
 
     msg_text = msg.caption if msg.text is None else msg.text
     if msg_text is None:
-        print(msg)
+        logging.info(msg)
         return
 
     groups = get_groups(msg.chat.id)
@@ -213,7 +218,7 @@ async def do_call_group(msg: types.Message, group):
         await msg.reply('Ты ни кого не призвал, дебилыч')
         return
 
-    print('Group: ', group_to_str(group))
+    logging.info('Group: ', group_to_str(group))
     await msg.reply(group_to_str(group))
 
 
@@ -233,11 +238,11 @@ async def ask_call(msg: types.Message):
         role = 'assistant' if context_msg.from_user.is_bot else 'user'
         context_text = context_msg.caption if context_msg.text is None else context_msg.text
         context = chat_gpt_handlers.simple_context(context_text, role=role)
-        print(context)
+        logging.info(context)
 
     try:
         response = chat_gpt_handlers.get_answer(text, context=context)
-        print(response)
+        logging.info(response)
         await msg.reply(response, parse_mode=ParseMode.MARKDOWN)
     except Exception as err:
         await msg.reply('я завершился с ошибкой, попробуй ещё раз')
@@ -249,7 +254,7 @@ def prepare_text(text: str):
 
 
 async def voice_listener(msg: types.Message):
-    print(msg)
+    logging.info(msg)
     async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
