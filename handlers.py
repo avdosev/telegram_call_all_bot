@@ -201,7 +201,7 @@ async def message_listener(msg: types.Message):
         if random_action_needed():
             await msg.reply('пидора ответ') 
 
-    if any((variant == msg_text or re.match(fr'(^|\s){variant}\?$', msg_text) for variant in  ('чо', 'че', 'чё'))):
+    if any((variant == msg_text or len(re.findall(f'(^|\\s){variant}{{1,}}\\?$', msg_text)) for variant in  ('чо', 'че', 'чё'))):
         await msg.reply('Хуй через плечо')
     
     if msg_text.endswith('300'):
