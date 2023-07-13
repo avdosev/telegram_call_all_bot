@@ -10,6 +10,7 @@ from functools import reduce, partial
 import io
 import asyncio
 import logging
+import re
 
 try:
     import chat_gpt_handlers
@@ -199,6 +200,9 @@ async def message_listener(msg: types.Message):
     if 'нет' == msg_text:
         if random_action_needed():
             await msg.reply('пидора ответ') 
+
+    if any((variant == msg_text or re.match(fr'(^|\s){variant}\?$', msg_text) for variant in  ('чо', 'че', 'чё'))):
+        await msg.reply('Хуй через плечо')
     
     if msg_text.endswith('300'):
         if random_action_needed():
