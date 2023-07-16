@@ -26,6 +26,7 @@ except:
 def random_action_needed():
     return random_bool(0.05)
 
+TG_MAX_MESSAGE_LEN = 3900
 
 def setup(dp: Dispatcher):
     dp.register_message_handler(bot_help, CommandHelp())
@@ -282,5 +283,8 @@ async def voice_listener(msg: types.Message):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
         text = await whisper_voice.transcribe(voice, msg.voice.file_id)
-        await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + text, ParseMode.HTML)
+        if text <= TG_MAX_MESSAGE_LEN:
+            await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + text, ParseMode.HTML)
+        else:
+            pass
 

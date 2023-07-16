@@ -1,5 +1,6 @@
 import json
 import random
+import re
 
 rnd = random.SystemRandom()
 
@@ -36,3 +37,30 @@ def random_bool(probability=0.5):
 
 def indexes(iterable):
     return range(len(iterable))
+
+sentence_re_splitter = re.compile(r'(?<=[.!?])')
+def split_text_to_chunks(text: str, max_length) -> list[str]:
+    sentences = sentence_re_splitter.split(text)
+    chunks = []
+    current_chunk = ''
+
+    for sentence in sentences:
+        if len(current_chunk) + len(sentence) <= max_length:
+            current_chunk += sentence
+        else:
+            chunks.append(current_chunk)
+            current_chunk = sentence
+    
+    # Добавляем последний оставшийся чанк, если есть
+    if current_chunk:
+        chunks.append(current_chunk)
+    
+    return chunks
+
+if "__main__" == __name__:
+    text = "Это пример текста. Он содержит несколько предложений. Мы будем использовать этот текст для тестирования функции."
+    max_length = 300
+    chunks = split_text_to_chunks(text, max_length)
+
+    for chunk in chunks:
+        print(chunk)
