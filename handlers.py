@@ -288,6 +288,6 @@ async def voice_listener(msg: types.Message):
         else:
             chunks = split_text_to_chunks(text, TG_MAX_MESSAGE_LEN) 
             first_chunk = chunks[0]
-            answer = await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + first_chunks + ' ...', ParseMode.HTML)    
+            answer = await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + first_chunk + ' ...', ParseMode.HTML)    
             for chunk in chunks[1:]:
                 answer = await answer.reply(chunk, ParseMode.HTML)
