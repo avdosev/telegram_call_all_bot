@@ -11,6 +11,7 @@ import io
 import asyncio
 import logging
 import re
+import os
 
 try:
     import chat_gpt_handlers
@@ -38,6 +39,8 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(
         voice_listener, content_types=types.ContentTypes.VOICE)
+    dp.register_message_handler(
+        video_listener, content_types=types.ContentTypes.VIDEO)
     dp.register_message_handler(
         message_listener, content_types=types.ContentTypes.ANY)
 
@@ -180,7 +183,7 @@ async def message_listener(msg: types.Message):
         await msg.reply('ебать ты лох, а гонора то было')
     
     if 'я лох' in msg_text:
-        if msg.from_user.username == 'avdosev':
+        if msg.from_user.username == 'unterumarmung':
             await msg.reply('да, ты лох')
         else:
             await msg.reply('нет, ты пупсик')
@@ -282,12 +285,43 @@ async def voice_listener(msg: types.Message):
     async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
-        text = await whisper_voice.transcribe(voice, msg.voice.file_id)
-        if len(text) <= TG_MAX_MESSAGE_LEN:
-            await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + text, ParseMode.HTML)
-        else:
-            chunks = split_text_to_chunks(text, TG_MAX_MESSAGE_LEN) 
-            first_chunk = chunks[0]
-            answer = await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + first_chunk + ' ...', ParseMode.HTML)    
-            for chunk in chunks[1:]:
-                answer = await answer.reply(chunk, ParseMode.HTML)
+        text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
+        answer_message(msg, text)
+
+async def video_listener(msg: types.Message):
+    logging.info(msg)
+    async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
+        video = io.BytesIO()
+        await msg.video.download(destination_file=video, timeout=180)
+        audio = video_to_audio(video)
+        text = await whisper_voice.transcribe(video, f"video:{msg.video.file_id}")
+        answer_message(msg, text)
+
+async def video_to_audio(video: io.BytesIO):
+    logging.info("starting to convert video...")
+    with open("temp_video", "wb") as f:
+        f.write(video.getbuffer())
+
+    # extract audio stream without re-encoding
+    command = "ffmpeg -i ./temp_video -vn -acodec copy temp_audio.wav"
+    proc = asyncio.create_subprocess_shell(command)
+    await proc.communicate()
+
+    with open("temp_audio.wav", "rb") as f:
+        audio = BytesIO(f.read())
+
+    os.remove("temp_video")
+    os.remove("temp_audio.wav")
+
+    logging.info("video converted")
+    return audio
+
+async def answer_message(msg, text):
+    if len(text) <= TG_MAX_MESSAGE_LEN:
+        await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + text, ParseMode.HTML)
+    else:
+        chunks = split_text_to_chunks(text, TG_MAX_MESSAGE_LEN) 
+        first_chunk = chunks[0]
+        answer = await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + first_chunk + ' ...', ParseMode.HTML)    
+        for chunk in chunks[1:]:
+            answer = await answer.reply(chunk, ParseMode.HTML)

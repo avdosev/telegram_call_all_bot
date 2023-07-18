@@ -10,11 +10,11 @@ logger = logging.getLogger('whisper')
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix='whisper')
 
 whisper = Whisper(model_path="../whisper.cpp/models/ggml-small.bin", n_threads=4, strategy=1)
-def transcribe_sync(voice, voice_id):
+def transcribe_sync(voice, file_id):
     start = time.time()
     output = whisper.transcribe(voice, language='ru')
     end = time.time()
-    logger.info(f'Time: {end-start}, Id: {voice_id}')
+    logger.info(f'Time: {end-start}, Id: {file_id}')
     return output['text']
 
 
