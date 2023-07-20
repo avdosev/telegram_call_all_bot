@@ -286,7 +286,7 @@ async def voice_listener(msg: types.Message):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
         text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
-        answer_message(msg, text)
+        await answer_message(msg, text)
 
 async def video_listener(msg: types.Message):
     logging.info(msg)
@@ -295,7 +295,7 @@ async def video_listener(msg: types.Message):
         await msg.video.download(destination_file=video, timeout=180)
         audio = video_to_audio(video)
         text = await whisper_voice.transcribe(audio, f"video:{msg.video.file_id}")
-        answer_message(msg, text)
+        await answer_message(msg, text)
 
 async def video_to_audio(video: io.BytesIO):
     logging.info("starting to convert video...")
