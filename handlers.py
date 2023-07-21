@@ -79,7 +79,7 @@ async def cmd_call(msg: types.Message):
 
 async def version_call(msg: types.Message):
     result = subprocess.Popen(
-        'git log -1 --pretty="by <b>%cN</b>, %ar%ntitle: %Bcommit: <i>%H</i>"',
+        'git log -1 --pretty="by <b>%cN</b>, %ar%ntitle: %B%ncommit: <i>%H</i>"',
         shell=True, stdout=subprocess.PIPE).stdout.read()
     result = result.decode('utf-8', errors='ignore')
     await msg.reply(result, ParseMode.HTML)
@@ -92,7 +92,7 @@ async def logs_call(msg: types.Message):
         shell=True, stdout=subprocess.PIPE).stdout.read()
     result = result.decode('utf-8', errors='ignore')
 
-    await reply_long_message(msg, logs_prepare(result), ParseMode.HTML)
+    await reply_long_message(msg, logs_prepare(result), ParseMode.MARKDOWN)
 
 def logs_prepare(s: str) -> str:
     lines = s.split('\n')
