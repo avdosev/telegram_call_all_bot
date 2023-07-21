@@ -92,7 +92,7 @@ async def logs_call(msg: types.Message):
         shell=True, stdout=subprocess.PIPE).stdout.read()
     result = result.decode('utf-8', errors='ignore')
 
-    await msg.reply(logs_prepare(result), ParseMode.HTML)
+    await reply_long_message(msg, logs_prepare(result), ParseMode.HTML)
 
 def logs_prepare(s: str) -> str:
     lines = s.split('\n')
@@ -308,12 +308,28 @@ async def video_to_audio(video: io.BytesIO):
     await proc.communicate()
 
     with open("temp_audio.wav", "rb") as f:
-        audio = BytesIO(f.read())
+        audio = io.BytesIO(f.read())
 
     os.remove("temp_video")
     os.remove("temp_audio.wav")
 
     logging.info("video converted")
+
+    # from ffmpeg.asyncio import FFmpeg
+    # ffmpeg = (
+    #     FFmpeg()
+    #     .option("y")
+    #     .input("pipe:0")
+    #     .output(
+    #         "pipe:1",
+    #         {"codec:a": "pcm_s16le"},
+    #         vn=None,
+    #         f="wav",
+    #     )
+    # )
+
+    # audio = await ffmpeg.execute(video)
+
     return audio
 
 async def answer_message(msg, text):
@@ -325,3 +341,10 @@ async def answer_message(msg, text):
         answer = await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + first_chunk + ' ...', ParseMode.HTML)    
         for chunk in chunks[1:]:
             answer = await answer.reply(chunk, ParseMode.HTML)
+
+async def reply_long_message(msg: types.Message, text, parse_mode=ParseMode.HTML):
+    chunks = split_text_to_chunks(text, TG_MAX_MESSAGE_LEN) 
+    answer = msg
+    for i, chunk in enumerate(chunks):
+        chunk_text = chunk + '\n[Продолжение ниже]' if i < len(chunks) - 1 else chunk
+        answer = await answer.reply(chunk_text, parse_mode)
