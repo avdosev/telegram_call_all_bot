@@ -294,7 +294,7 @@ async def video_listener(msg: types.Message):
     async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
         video = io.BytesIO()
         await msg.video.download(destination_file=video, timeout=180)
-        audio = video_to_audio(video)
+        audio = await video_to_audio(video)
         text = await whisper_voice.transcribe(audio, f"video:{msg.video.file_id}")
         await answer_message(msg, text)
 
