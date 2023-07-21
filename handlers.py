@@ -304,7 +304,7 @@ async def video_to_audio(video: io.BytesIO):
 
     # extract audio stream without re-encoding
     command = "ffmpeg -i ./temp_video -vn -acodec copy temp_audio.wav"
-    proc = asyncio.create_subprocess_shell(command)
+    proc = await asyncio.create_subprocess_shell(command)
     await proc.communicate()
 
     with open("temp_audio.wav", "rb") as f:
