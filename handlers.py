@@ -12,6 +12,7 @@ import asyncio
 import logging
 import re
 import os
+import html
 
 try:
     import chat_gpt_handlers
@@ -92,7 +93,7 @@ async def logs_call(msg: types.Message):
         shell=True, stdout=subprocess.PIPE).stdout.read()
     result = result.decode('utf-8', errors='ignore')
 
-    await reply_long_message(msg, logs_prepare(result), ParseMode.MARKDOWN)
+    await reply_long_message(msg, logs_prepare(html.escape(result)), ParseMode.HTML)
 
 def logs_prepare(s: str) -> str:
     lines = s.split('\n')
