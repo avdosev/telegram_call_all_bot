@@ -298,11 +298,13 @@ async def video_listener(msg: types.Message):
         print(msg.content_type)
         if msg.content_type == 'video_note':
             await msg.video_note.download(destination_file=video, timeout=180)
+            logs_id = msg.video_note.file_id
         else:
             await msg.video.download(destination_file=video, timeout=180)
+            logs_id = msg.video.file_id
 
         audio = await video_to_audio(video)
-        text = await whisper_voice.transcribe(audio, f"video:{msg.video.file_id}")
+        text = await whisper_voice.transcribe(audio, f"video:{logs_id}")
         await answer_message(msg, text)
 
 
