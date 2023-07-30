@@ -2,6 +2,7 @@ import uuid
 import os
 import io
 import logging
+from ffmpeg.asyncio import FFmpeg
 
 # предварительная инициализация
 os.makedirs('tmp', exist_ok=True)
@@ -15,7 +16,6 @@ async def video_to_audio(video: io.BytesIO):
     with open(video_tmp_filename, "wb") as f:
         f.write(video.getbuffer())
 
-    from ffmpeg.asyncio import FFmpeg
     ffmpeg = (
         FFmpeg()
         .option("y")
@@ -29,10 +29,11 @@ async def video_to_audio(video: io.BytesIO):
     )
     
     try:
-        audio = await ffmpeg.execute()
+        audio = io.BytesIO(await ffmpeg.execute())
         logging.info("video converted")
+    except:
+        logging.info("video not converted")
     finally:
         os.remove(video_tmp_filename)
-        logging.info("video not converted")
     
     return audio
