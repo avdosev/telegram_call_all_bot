@@ -3,6 +3,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import CommandStart, CommandHelp
 from action_sender import ChatActionSender
 from helpers import *
+from video_helper import *
 import subprocess
 from aiogram.types import ParseMode
 import operator
@@ -11,7 +12,6 @@ import io
 import asyncio
 import logging
 import re
-import os
 import html
 
 try:
@@ -41,7 +41,9 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(
         voice_listener, content_types=types.ContentTypes.VOICE)
     dp.register_message_handler(
-        video_listener, content_types=types.ContentTypes.VIDEO)
+        video_listener, content_types=types.ContentTypes.VIDEO) 
+    dp.register_message_handler(
+        video_listener, content_types=types.ContentTypes.VIDEO_NOTE)
     dp.register_message_handler(
         message_listener, content_types=types.ContentTypes.ANY)
 
@@ -293,46 +295,15 @@ async def video_listener(msg: types.Message):
     logging.info(msg)
     async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
         video = io.BytesIO()
+        print(msg.content_type)
+        # if msg.content_type
+        await msg.video_note.download(destination_file=video, timeout=180)
         await msg.video.download(destination_file=video, timeout=180)
         audio = video
-        # audio = await video_to_audio(video)
+        audio = await video_to_audio(video)
         text = await whisper_voice.transcribe(audio, f"video:{msg.video.file_id}")
         await answer_message(msg, text)
 
-async def video_to_audio(video: io.BytesIO):
-    logging.info("starting to convert video...")
-    with open("temp_video", "wb") as f:
-        f.write(video.getbuffer())
-
-    # extract audio stream without re-encoding
-    command = "ffmpeg -i ./temp_video -vn -acodec copy temp_audio.wav"
-    proc = await asyncio.create_subprocess_shell(command)
-    await proc.communicate()
-
-    with open("temp_audio.wav", "rb") as f:
-        audio = io.BytesIO(f.read())
-
-    os.remove("temp_video")
-    os.remove("temp_audio.wav")
-
-    logging.info("video converted")
-
-    # from ffmpeg.asyncio import FFmpeg
-    # ffmpeg = (
-    #     FFmpeg()
-    #     .option("y")
-    #     .input("pipe:0")
-    #     .output(
-    #         "pipe:1",
-    #         {"codec:a": "pcm_s16le"},
-    #         vn=None,
-    #         f="wav",
-    #     )
-    # )
-
-    # audio = await ffmpeg.execute(video)
-
-    return audio
 
 async def answer_message(msg, text):
     if len(text) <= TG_MAX_MESSAGE_LEN:
