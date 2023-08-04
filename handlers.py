@@ -40,8 +40,8 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(
         voice_listener, content_types=types.ContentTypes.VOICE)
-    dp.register_message_handler(
-        video_listener, content_types=types.ContentTypes.VIDEO) 
+    # dp.register_message_handler(
+    #    video_listener, content_types=types.ContentTypes.VIDEO) 
     dp.register_message_handler(
         video_listener, content_types=types.ContentTypes.VIDEO_NOTE)
     dp.register_message_handler(
