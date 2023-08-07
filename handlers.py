@@ -162,7 +162,7 @@ async def message_listener(msg: types.Message):
             await do_call(message, group_name)
             return
 
-    msg_text = msg.caption if msg.text is None else msg.text
+    orig_msg_text = msg_text = msg.caption if msg.text is None else msg.text
     if msg_text is None:
         logging.info(msg)
         return
@@ -210,6 +210,9 @@ async def message_listener(msg: types.Message):
 
     if any((variant == msg_text or len(re.findall(f'(^|\\s){variant}{{1,}}\\?$', msg_text)) for variant in  ('чо', 'че', 'чё'))):
         await msg.reply('Хуй через плечо')
+
+    if msg_text.endswith(' вперед') or msg_text.endswith(' вперёд'):
+        await msg.answer(orig_msg_text) 
     
     if msg_text.endswith('300'):
         if random_action_needed():
