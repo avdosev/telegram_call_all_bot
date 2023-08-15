@@ -26,7 +26,7 @@ except:
     logging.warning('whisper not imported')
 
 def random_action_needed():
-    return random_bool(0.05)
+    return random_bool(0.06)
 
 TG_MAX_MESSAGE_LEN = 3900
 
@@ -185,11 +185,8 @@ async def message_listener(msg: types.Message):
     if 'ладно' == msg_text:
         await msg.reply('ебать ты лох, а гонора то было')
     
-    if 'я лох' in msg_text:
-        if msg.from_user.username == 'unterumarmung':
-            await msg.reply('да, ты лох')
-        else:
-            await msg.reply('нет, ты пупсик')
+    if len(re.findall('(^|\\s)я лох($|\\s', msg_text)) in msg_text:
+        await msg.reply('нет, ты пупсик')
 
     if '?' == msg_text:
         await msg.reply('что тебе неясно, хуила?')
