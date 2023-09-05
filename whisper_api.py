@@ -10,6 +10,9 @@ import asyncio
 os.makedirs('tmp', exist_ok=True)
 logger = logging.getLogger(__name__)
 
+timeout = aiohttp.ClientTimeout(total=None, connect=None,
+                      sock_connect=None, sock_read=None)
+
 lock = asyncio.Lock()
 
 async def transcribe(voice, *args):
@@ -19,35 +22,34 @@ async def transcribe(voice, *args):
 async def transcribe_api(voice, file_id): 
     start = time.time()
     
-    async with aiohttp.ClientSession() as session:
-        temp_filename = f'tmp/{uuid.uuid1()}'
+    temp_filename = f'tmp/{uuid.uuid1()}'
 
-
-        ffmpeg = (
-            FFmpeg()
-            .option("y")
-            .input("pipe:0")
-            .output(
-                temp_filename,
-                {"codec:a": "pcm_s16le"},
-                vn=None,
-                ar='16000',
-                f="wav",
-            )
+    ffmpeg = (
+        FFmpeg()
+        .option("y")
+        .input("pipe:0")
+        .output(
+            temp_filename,
+            {"codec:a": "pcm_s16le"},
+            vn=None,
+            ar='16000',
+            f="wav",
         )
+    )
 
 
-        await ffmpeg.execute(voice.getbuffer())
+    await ffmpeg.execute(voice.getbuffer())
+
+    data = aiohttp.FormData()
+    with open(temp_filename, 'rb') as f:
+        data.add_field('file',
+                    f.read(),
+                    filename='audio.wav')
     
-        data = aiohttp.FormData()
-        with open(temp_filename, 'rb') as f:
-            data.add_field('file',
-                        f.read(),
-                        filename='audio.wav')
-        
-        os.remove(temp_filename)
-
-        async with session.post('http://0.0.0.0:8080/transcribe', data=data) as resp:
+    os.remove(temp_filename)
+    
+    async with aiohttp.ClientSession() as session:
+        async with session.post('http://0.0.0.0:8080/transcribe', data=data, timeout=timeout) as resp:
             res = await resp.json()
             logger.info(f'status: {resp.status}, response: {res}')
 
