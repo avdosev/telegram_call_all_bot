@@ -194,8 +194,8 @@ async def message_listener(msg: types.Message):
     if '!' == msg_text:
         await msg.reply('\.')
     
-    if 'извините' == msg_text or 'извини' == msg_text:
-        await msg.reply('Рамзан Кадыров услышал тебя')
+    # if 'извините' == msg_text or 'извини' == msg_text:
+    #     await msg.reply('Рамзан Кадыров услышал тебя')
 
     if 'да' == msg_text:
         if random_action_needed():
