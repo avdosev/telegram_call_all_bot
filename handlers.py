@@ -182,19 +182,19 @@ async def message_listener(msg: types.Message):
     if 'ты обосрался' in msg_text:
         await msg.reply('пока куча дерьма только у тебя в штанах')
 
-    if 'ладно' == msg_text:
-        await msg.reply('ебать ты лох, а гонора то было')
+    # if 'ладно' == msg_text:
+    #     await msg.reply('ебать ты лох, а гонора то было')
     
     if len(re.findall('(^|\\s)я лох($|\\s)', msg_text)):
         await msg.reply('нет, ты пупсик')
 
     if '?' == msg_text:
-        await msg.reply('что тебе неясно, хуила?')
+        await msg.reply('что тебе неясно?')
     
     if '!' == msg_text:
         await msg.reply('\.')
     
-    if 'извините' == msg_text:
+    if 'извините' == msg_text or 'извини' == msg_text:
         await msg.reply('Рамзан Кадыров услышал тебя')
 
     if 'да' == msg_text:
