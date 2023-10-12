@@ -309,7 +309,7 @@ async def voice_listener(msg: types.Message):
             summary = None
         
         if summary is not None:
-            await answer_message(msg, '**Кратко**:\n'+summary)
+            await answer_message(msg, '<b>Кратко</b>:\n'+summary, user_prefix=False)
         
         await answer_message(msg, text)
 
@@ -330,13 +330,18 @@ async def video_listener(msg: types.Message):
         await answer_message(msg, text)
 
 
-async def answer_message(msg, text):
+async def answer_message(msg, text, user_prefix=True):
+    if user_prefix:
+        prefix = '<b>' + msg.from_user.username + '</b>:\n'
+    else:
+        prefix = ''
+    
     if len(text) <= TG_MAX_MESSAGE_LEN:
-        await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + text, ParseMode.HTML)
+        await msg.reply(prefix + text, ParseMode.HTML)
     else:
         chunks = split_text_to_chunks(text, TG_MAX_MESSAGE_LEN) 
         first_chunk = chunks[0]
-        answer = await msg.reply('<b>' + msg.from_user.username + '</b>:\n' + first_chunk + ' ...', ParseMode.HTML)    
+        answer = await msg.reply(prefix + first_chunk + ' ...', ParseMode.HTML)    
         for chunk in chunks[1:]:
             answer = await answer.reply(chunk, ParseMode.HTML)
 
