@@ -329,6 +329,15 @@ async def video_listener(msg: types.Message):
         text = await whisper_voice.transcribe(audio, f"video:{logs_id}")
         await answer_message(msg, text)
 
+        # количество слов для адекватности, не суммаризировать все подряд
+        if len(text.split()) > 42: 
+            summary = await api_300.get_summary(text)
+        else:
+            summary = None
+                
+        if summary is not None:
+            await answer_message(msg, '<b>Кратко</b>:\n'+summary, user_prefix=False)
+
 
 async def answer_message(msg, text, user_prefix=True):
     if user_prefix:
