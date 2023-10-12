@@ -37,6 +37,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(ask_call, commands=['ask'])
     dp.register_message_handler(version_call, commands=['version'])
     dp.register_message_handler(logs_call, commands=['logs'])
+    dp.register_message_handler(force_restart, commands=['force_restart'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(
@@ -97,6 +98,16 @@ async def logs_call(msg: types.Message):
     result = result.decode('utf-8', errors='ignore')
 
     await reply_long_message(msg, logs_prepare(html.escape(result)), ParseMode.HTML)
+
+async def force_restart(msg: types.Message):
+    if msg.from_user.username not in {'avdosev', 'unterumarmung'}:
+        return
+    result = subprocess.Popen(
+        'systemctl restart callbotupdate',
+        shell=True, stdout=subprocess.PIPE).stdout.read()
+    result = result.decode('utf-8', errors='ignore')
+
+    await reply_long_message(msg, html.escape(result), ParseMode.HTML)
 
 def logs_prepare(s: str) -> str:
     lines = s.split('\n')
