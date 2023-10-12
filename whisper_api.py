@@ -15,7 +15,7 @@ timeout = aiohttp.ClientTimeout(total=None, connect=None,
 
 lock = asyncio.Lock()
 
-async def transcribe(voice, *args):
+async def transcribe(voice, *args) -> str:
     async with lock:   
         return await transcribe_api(voice, *args)
 

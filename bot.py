@@ -4,6 +4,7 @@ from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import os
 import logging
+from helpers import read_file
 
 def setup_logging():
     logging.basicConfig(filename='bot_logs.txt',
@@ -17,18 +18,6 @@ def setup_logging():
 async def on_startup(dp: Dispatcher):
     import handlers
     handlers.setup(dp)
-
-
-def read_file(path):
-    try:
-        with open(path, 'r') as f:
-            info = f.read()
-            return info
-    except:
-        logging.error('cant read file', path)
-    
-    return None
-
 
 if __name__ == '__main__':
     setup_logging()

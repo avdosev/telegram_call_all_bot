@@ -13,6 +13,7 @@ import asyncio
 import logging
 import re
 import html
+import api_300
 
 try:
     import chat_gpt_handlers
@@ -289,6 +290,14 @@ async def voice_listener(msg: types.Message):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
         text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
+        
+        # количество слов для адекватности, не суммаризировать все подряд
+        if len(text.split()) > 69: 
+            summary = await api_300.get_summary(text)
+        
+        if summary is not None:
+            await answer_message(msg, '**Кратко**:\n'+summary)
+        
         await answer_message(msg, text)
 
 async def video_listener(msg: types.Message):

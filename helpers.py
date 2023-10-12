@@ -1,6 +1,7 @@
 import json
 import random
 import re
+import logging
 
 rnd = random.SystemRandom()
 
@@ -10,6 +11,16 @@ def read_json(path):
             return json.load(f)
     except FileNotFoundError:
         return {}
+
+
+def read_file(path):
+    try:
+        with open(path, 'r') as f:
+            return f.read()
+    except:
+        logging.error('cant read file', path)
+    
+    return None
 
 
 def dump_json(path, obj):
