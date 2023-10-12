@@ -294,6 +294,8 @@ async def voice_listener(msg: types.Message):
         # количество слов для адекватности, не суммаризировать все подряд
         if len(text.split()) > 69: 
             summary = await api_300.get_summary(text)
+        else:
+            summary = None
         
         if summary is not None:
             await answer_message(msg, '**Кратко**:\n'+summary)
