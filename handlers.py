@@ -303,15 +303,15 @@ async def voice_listener(msg: types.Message):
         text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
         
         # количество слов для адекватности, не суммаризировать все подряд
-        if len(text.split()) > 69: 
+        if len(text.split()) > 42: 
             summary = await api_300.get_summary(text)
         else:
             summary = None
         
+        await answer_message(msg, text)
+        
         if summary is not None:
             await answer_message(msg, '<b>Кратко</b>:\n'+summary, user_prefix=False)
-        
-        await answer_message(msg, text)
 
 async def video_listener(msg: types.Message):
     logging.info(msg)
