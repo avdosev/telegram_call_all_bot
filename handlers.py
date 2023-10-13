@@ -37,6 +37,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(ask_call, commands=['ask'])
     dp.register_message_handler(version_call, commands=['version'])
     dp.register_message_handler(logs_call, commands=['logs'])
+    dp.register_message_handler(summarize_reply, commands=['summarize'])
     dp.register_message_handler(force_restart, commands=['force_restart'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
@@ -162,6 +163,29 @@ async def cmd_create(msg: types.Message):
     if len(group_name) and len(values):
         add_groups(msg.chat.id, group_name, values)
         await msg.reply('группа создана')
+
+
+async def summarize_reply(msg: types.Message):
+    msg_reply = msg.reply_to_message
+
+    if msg_reply is None:
+        await msg.reply('Используй реплай, я не понял, что суммаризовать')
+        return
+    
+    msg_text = msg_text = msg_reply.caption if msg_reply.text is None else msg_reply.text
+    if msg_text is None:
+        logging.info(msg)
+        return
+    
+    if len(text.split()) > 42: 
+        summary = await api_300.get_summary(text)
+    else:
+        summary = None
+                
+    if summary is not None:
+        await answer_message(msg, '<b>Кратко</b>:\n'+summary, user_prefix=False)
+    else:
+        await msg.reply('Сообщение слишком короткое или произошла ошибка')
 
 
 async def message_listener(msg: types.Message):
