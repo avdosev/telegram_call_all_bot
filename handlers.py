@@ -172,8 +172,8 @@ async def summarize_reply(msg: types.Message):
         await msg.reply('Используй реплай, я не понял, что суммаризовать')
         return
     
-    msg_text = msg_text = msg_reply.caption if msg_reply.text is None else msg_reply.text
-    if msg_text is None:
+    text = msg_reply.caption if msg_reply.text is None else msg_reply.text
+    if text is None:
         logging.info(msg)
         return
     
