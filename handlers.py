@@ -327,7 +327,7 @@ async def voice_listener(msg: types.Message):
         text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
         
         # количество слов для адекватности, не суммаризировать все подряд
-        if len(text.split()) > 42: 
+        if len(text.split()) > 69: 
             summary = await api_300.get_summary(text)
         else:
             summary = None
