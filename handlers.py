@@ -325,6 +325,7 @@ async def voice_listener(msg: types.Message):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
         text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
+        await answer_message(msg, text)
         
         # количество слов для адекватности, не суммаризировать все подряд
         if len(text.split()) > 69: 
@@ -337,7 +338,7 @@ async def voice_listener(msg: types.Message):
             summary = summary.replace('Автор', username)
         else:
             summary = None
-                
+        
         if summary is not None:
             summary_is_otlup = 'не подходит для выполнения задачи' in summary
             if summary_is_otlup:
