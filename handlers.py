@@ -328,13 +328,19 @@ async def voice_listener(msg: types.Message):
         
         # количество слов для адекватности, не суммаризировать все подряд
         if len(text.split()) > 69: 
-            summary = await api_300.get_summary(text)
+            username = msg.from_user.username
+            summary = await api_300.get_summary(
+                 f'{msg.from_user.username} говорит: "{text}"'
+            )
+            summary = summary.replace('Автор', username)
         else:
             summary = None
-        
-        await answer_message(msg, text)
-        
+                
         if summary is not None:
+            summary_is_otlup = 'не подходит для выполнения задачи' in summary
+            if summary_is_otlup:
+                return
+            
             await answer_message(msg, '<b>Кратко</b>:\n'+summary, user_prefix=False)
 
 async def video_listener(msg: types.Message):
@@ -355,11 +361,19 @@ async def video_listener(msg: types.Message):
 
         # количество слов для адекватности, не суммаризировать все подряд
         if len(text.split()) > 42: 
-            summary = await api_300.get_summary(text)
+            username = msg.from_user.username
+            summary = await api_300.get_summary(
+                 f'{msg.from_user.username} говорит: "{text}"'
+            )
+            summary = summary.replace('Автор', username)
         else:
             summary = None
                 
         if summary is not None:
+            summary_is_otlup = 'не подходит для выполнения задачи' in summary
+            if summary_is_otlup:
+                return
+            
             await answer_message(msg, '<b>Кратко</b>:\n'+summary, user_prefix=False)
 
 
