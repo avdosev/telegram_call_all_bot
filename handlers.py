@@ -325,6 +325,7 @@ async def voice_listener(msg: types.Message):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
         text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
+        text = re.sub(r"\[.*?\]", "", text)
         await answer_message(msg, text)
         
         # количество слов для адекватности, не суммаризировать все подряд
