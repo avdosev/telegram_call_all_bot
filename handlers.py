@@ -328,7 +328,8 @@ async def voice_listener(msg: types.Message):
         
         # количество слов для адекватности, не суммаризировать все подряд
         if len(text.split()) > 69: 
-            username = msg.from_user.username
+            username = msg.forward_sender_name
+            username = msg.from_user.username if username is None else username
             summary = await api_300.get_summary(
                  f'{msg.from_user.username} говорит: "{text}"'
             )
@@ -362,7 +363,8 @@ async def video_listener(msg: types.Message):
 
         # количество слов для адекватности, не суммаризировать все подряд
         if len(text.split()) > 42: 
-            username = msg.from_user.username
+            username = msg.forward_sender_name
+            username = msg.from_user.username if username is None else username
             summary = await api_300.get_summary(
                  f'{msg.from_user.username} говорит: "{text}"'
             )
