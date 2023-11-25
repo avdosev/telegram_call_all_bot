@@ -332,6 +332,7 @@ async def voice_listener(msg: types.Message):
             summary = await api_300.get_summary(
                  f'{msg.from_user.username} говорит: "{text}"'
             )
+            summary = summary.replace('Автор статьи', username)
             summary = summary.replace('Автор', username)
         else:
             summary = None
@@ -365,6 +366,7 @@ async def video_listener(msg: types.Message):
             summary = await api_300.get_summary(
                  f'{msg.from_user.username} говорит: "{text}"'
             )
+            summary = summary.replace('Автор статьи', username)
             summary = summary.replace('Автор', username)
         else:
             summary = None
