@@ -15,6 +15,8 @@ import re
 import html
 import api_300
 
+allow_toxic = True
+
 try:
     import chat_gpt_handlers
     allow_openai = True
@@ -41,6 +43,8 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(force_restart, commands=['force_restart'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
+    dp.register_message_handler(cmd_polite, commands=['be_polite'])
+
     dp.register_message_handler(
         voice_listener, content_types=types.ContentTypes.VOICE)
     # dp.register_message_handler(
@@ -59,6 +63,7 @@ async def bot_help(msg: types.Message):
         '/create \- создать группу',
         '/version \- узнать версию',
         '/ask \- спросить',
+        '/be_polite \- убрать токсичность',
     ]
     groups = get_groups(msg.chat.id)
     res = []
@@ -164,6 +169,10 @@ async def cmd_create(msg: types.Message):
         add_groups(msg.chat.id, group_name, values)
         await msg.reply('группа создана')
 
+async def cmd_polite(msg: types.Message):
+    global allow_toxic
+    allow_toxic = False
+    await msg.reply('Выключена токсичность')
 
 async def summarize_reply(msg: types.Message):
     msg_reply = msg.reply_to_message
@@ -209,7 +218,7 @@ async def message_listener(msg: types.Message):
     if 'ты лох' in msg_text or 'лох ты' in msg_text or msg_text == 'лох':
         await msg.reply('нет, ты лох')
 
-    if 'некит лох' in msg_text:
+    if 'некит лох' in msg_text and allow_toxic:
         await msg.reply('сам лох')
 
     if 'некит обосрался' in msg_text or 'некит опять обосрался' in msg_text:
@@ -233,11 +242,11 @@ async def message_listener(msg: types.Message):
     # if 'извините' == msg_text or 'извини' == msg_text:
     #     await msg.reply('Рамзан Кадыров услышал тебя')
 
-    if 'да' == msg_text:
+    if 'да' == msg_text and allow_toxic:
         if random_action_needed():
             await msg.reply('пизда') 
     
-    if 'нет' == msg_text:
+    if 'нет' == msg_text and allow_toxic:
         if random_action_needed():
             await msg.reply('пидора ответ') 
 
@@ -247,7 +256,7 @@ async def message_listener(msg: types.Message):
     if msg_text.endswith(' вперед') or msg_text.endswith(' вперёд'):
         await msg.answer(orig_msg_text) 
     
-    if msg_text.endswith('300'):
+    if msg_text.endswith('300') and allow_toxic:
         if random_action_needed():
             await msg.reply('отсоси у тракториста') 
 
