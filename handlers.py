@@ -224,8 +224,8 @@ async def message_listener(msg: types.Message):
     if len(re.findall('(^|\\s)я лох($|\\s)', msg_text)):
         await msg.reply('нет, ты пупсик')
 
-    if '?' == msg_text:
-        await msg.reply('что тебе неясно?')
+    # if '?' == msg_text:
+    #     await msg.reply('что тебе неясно?')
     
     if '!' == msg_text:
         await msg.reply('\.')
@@ -247,9 +247,8 @@ async def message_listener(msg: types.Message):
     if msg_text.endswith(' вперед') or msg_text.endswith(' вперёд'):
         await msg.answer(orig_msg_text) 
     
-    if msg_text.endswith('300'):
-        if random_action_needed():
-            await msg.reply('отсоси у тракториста') 
+    if msg_text == '300':
+        await msg.reply('отсоси у тракториста') 
 
     groups_to_call = []
     for group_name in groups:
