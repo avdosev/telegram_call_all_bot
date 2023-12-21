@@ -10,6 +10,7 @@ WorkingDirectory=/home/avdosev/dev/telegram_call_all_bot
 ExecStart=/usr/bin/python3 /home/avdosev/dev/telegram_call_all_bot/bot.py
 RestartSec=10
 Restart=always
+Environment="LD_LIBRARY_PATH=/opt/intel/oneapi/2024.0/lib"
  
 [Install]
 WantedBy=multi-user.target
