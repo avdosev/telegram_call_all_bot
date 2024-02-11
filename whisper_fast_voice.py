@@ -20,7 +20,7 @@ def transcribe_sync(voice, file_id):
     end = time.time()
     
     logger.info(f'Time: {end-start}, Id: {file_id}')
-    return text
+    return text.strip()
 
 
 lock = asyncio.Lock()
