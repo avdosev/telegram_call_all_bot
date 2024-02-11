@@ -22,7 +22,7 @@ except:
     allow_openai = False
 
 try:
-    import whisper_api as whisper_voice
+    import whisper_fast_voice as whisper_voice
 except:
     logging.warning('whisper not imported')
 
