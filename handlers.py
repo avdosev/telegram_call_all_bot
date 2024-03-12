@@ -259,7 +259,8 @@ async def message_listener(msg: types.Message):
     if not len(groups_to_call):
         return
 
-    message = msg.reply_to_message if msg.reply_to_message else msg
+    message_without_any_words = not string_contains_normal_words(msg_text)
+    message = msg.reply_to_message if msg.reply_to_message and message_without_any_words else msg
     group = list(
         reduce(
             operator.or_, 
@@ -271,10 +272,32 @@ async def message_listener(msg: types.Message):
     await do_call_group(message, group)
 
 
+def string_contains_normal_words(s: str):
+    """
+    Проверяем наличие слов, не начинающихся с @
+    
+    ```py
+    s = "Это пример строки с @username и обычными словами"
+    print(s, ':', check_string(s))
+
+    s = "@username @anotheruser"
+    print(s, ':', check_string(s))
+
+    s = "@username anotheruser"
+    print(s, ':', check_string(s))
+
+    s = "username anotheruser"
+    print(s, ':', check_string(s))
+    ```
+    """
+    match = re.search(r'(?<!@)\b\w+', s)
+    return bool(match)
+
 
 async def do_call(msg: types.Message, group_name):
     group = get_group(msg.chat.id, group_name)
     await do_call_group(msg, group)
+
 
 async def do_call_group(msg: types.Message, group):
     group = exclude_msg_author(group, msg.from_user)
