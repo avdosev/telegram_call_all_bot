@@ -15,7 +15,7 @@ def transcribe_sync(voice, file_id):
     segments, info = model.transcribe(voice, beam_size=5)
 
     logger.debug("Detected language '%s' with probability %f" % (info.language, info.language_probability))
-    text = ' '.join([segment.text for segment in segments])
+    text = ' '.join([segment.text for segment in segments if len(segment.text) > 0])
     
     end = time.time()
     
