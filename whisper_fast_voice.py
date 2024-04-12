@@ -12,7 +12,7 @@ model = WhisperModel('medium', device="cpu", compute_type="int8")
 
 def transcribe_sync(voice, file_id):
     start = time.time()
-    segments, info = model.transcribe(voice, beam_size=4)
+    segments, info = model.transcribe(voice, beam_size=5)
 
     logger.debug("Detected language '%s' with probability %f" % (info.language, info.language_probability))
     text = ' '.join([segment.text for segment in segments if len(segment.text) > 0])
