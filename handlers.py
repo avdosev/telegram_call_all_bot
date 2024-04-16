@@ -218,8 +218,8 @@ async def message_listener(msg: types.Message):
     if 'ты обосрался' in msg_text:
         await msg.reply('пока куча дерьма только у тебя в штанах')
 
-    # if 'ладно' == msg_text:
-    #     await msg.reply('ебать ты лох, а гонора то было')
+    if 'ладно' == msg_text:
+        await msg.reply('ебать ты лох, а гонора то было')
     
     if len(re.findall('(^|\\s)я лох($|\\s)', msg_text)):
         await msg.reply('нет, ты пупсик')
