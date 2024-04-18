@@ -8,7 +8,7 @@ logger = logging.getLogger('whisper-fast')
 
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix='whisper-faster')
 
-model = WhisperModel('medium', device="cpu", compute_type="int8")
+model = WhisperModel('small', device="cpu", compute_type="int8")
 
 def transcribe_sync(voice, file_id):
     start = time.time()
