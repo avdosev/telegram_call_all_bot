@@ -349,25 +349,7 @@ async def voice_listener(msg: types.Message):
         text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
         text = re.sub(r"\[.*?\]", "", text)
         await answer_message(msg, text)
-        
-        # количество слов для адекватности, не суммаризировать все подряд
-        if len(text.split()) > 69: 
-            username = msg.forward_sender_name
-            username = msg.from_user.username if username is None else username
-            summary = await api_300.get_summary(
-                 f'{msg.from_user.username} говорит: "{text}"'
-            )
-            summary = summary.replace('Автор статьи', username)
-            summary = summary.replace('Автор', username)
-        else:
-            summary = None
-        
-        if summary is not None:
-            summary_is_otlup = 'не подходит для выполнения задачи' in summary
-            if summary_is_otlup:
-                return
-            
-            await answer_message(msg, '<b>Кратко</b>:\n'+summary, user_prefix=False)
+
 
 async def video_listener(msg: types.Message):
     logging.info(msg)
