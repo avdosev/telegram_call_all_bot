@@ -6,7 +6,11 @@ error_fixing_pipe = pipeline("text2text-generation", model="ai-forever/FRED-T5-1
 
 
 def fix_errors(text):
-    return error_fixing_pipe(text)[0]['generated_text']
+    paragraphs = text.split('\n\n')
+
+    fixed_paragraphs = [error_fixing_pipe(paragpaph)[0]['generated_text'] for paragpaph in paragraphs]
+    
+    return '\n\n'.join(fixed_paragraphs)
 
 
 async def transcribe(voice, *args) -> str:

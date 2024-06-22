@@ -22,7 +22,7 @@ except:
     allow_openai = False
 
 try:
-    import voice_transcribe as whisper_voice
+    import voice_transcribe
 except:
     logging.warning('whisper not imported')
 
@@ -206,6 +206,9 @@ async def message_listener(msg: types.Message):
     groups = get_groups(msg.chat.id)
     msg_text = msg_text.lower()
     
+    if 'тут?' == msg_text:
+        await msg.reply('Тут')
+
     if 'ты лох' in msg_text or 'лох ты' in msg_text or msg_text == 'лох':
         await msg.reply('нет, ты лох')
 
@@ -346,7 +349,7 @@ async def voice_listener(msg: types.Message):
     async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
         voice = io.BytesIO()
         _ = await msg.voice.download(destination_file=voice, timeout=180)
-        text = await whisper_voice.transcribe(voice, f"voice:{msg.voice.file_id}")
+        text = await voice_transcribe.transcribe(voice, f"voice:{msg.voice.file_id}")
         text = re.sub(r"\[.*?\]", "", text)
         await answer_message(msg, text)
 
@@ -364,7 +367,7 @@ async def video_listener(msg: types.Message):
             logs_id = msg.video.file_id
 
         audio = await video_to_audio(video)
-        text = await whisper_voice.transcribe(audio, f"video:{logs_id}")
+        text = await voice_transcribe.transcribe(audio, f"video:{logs_id}")
         await answer_message(msg, text)
 
         # количество слов для адекватности, не суммаризировать все подряд
