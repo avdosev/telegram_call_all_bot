@@ -8,7 +8,7 @@ async def transcribe(voice, *args) -> str:
 
     total_duration = segments[-1].end_time
 
-    use_timecodes = total_duration > 1.5*60
+    use_timecodes = total_duration > 1.1*60
 
     paragraphs = split_to_paragraphs(text_segments, segments if use_timecodes else None)
     
