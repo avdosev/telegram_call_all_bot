@@ -27,15 +27,13 @@ def split_to_paragraphs(sentences, timecodes=None):
             prefix = ''
 
         current += prefix + s.strip()
-        
-
 
         if i+1 < len(sx):
             do_split_segment = cosine_similarity([x], [sx[i+1][1]]) < 0.53
 
             if timecodes is not None:
                 time_diff = timecodes[i+1].start_time - timecodes[i].end_time
-                do_split_segment |= time_diff > 1.5
+                do_split_segment |= time_diff > 2.0
             
             if do_split_segment:
                 paragraphs.append(current)
