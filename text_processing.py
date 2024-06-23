@@ -33,7 +33,7 @@ def split_to_paragraphs(sentences, timecodes=None):
 
             if timecodes is not None:
                 time_diff = timecodes[i+1].start_time - timecodes[i].end_time
-                do_split_segment = do_split_segment or time_diff > 5.0
+                do_split_segment = do_split_segment or time_diff > 4.0
             
             if do_split_segment:
                 paragraphs.append(current)
