@@ -1,17 +1,17 @@
-from transformers import pipeline
 import whisper_fast_voice as whisper
-
-
-error_fixing_pipe = pipeline("text2text-generation", model="ai-forever/FRED-T5-1.7B-spell-distilled-100m")
-
-
-def fix_errors(text):
-    paragraphs = text.split('\n\n')
-
-    fixed_paragraphs = [error_fixing_pipe(paragpaph)[0]['generated_text'] for paragpaph in paragraphs]
-    
-    return '\n\n'.join(fixed_paragraphs)
+from text_processing import fix_errors, split_to_paragraphs
 
 
 async def transcribe(voice, *args) -> str:
-    return fix_errors(await whisper.transcribe(voice, *args))
+    segments = await whisper.transcribe(voice, *args)
+    text_segments = [segment.text for segment in segments]
+
+    total_duration = segments[-1].end_time
+
+    use_timecodes = total_duration > 1.5*60
+
+    paragraphs = split_to_paragraphs(text_segments, segments if use_timecodes else None)
+    
+    fixed_text = fix_errors('\n\n'.join(paragraphs))
+    
+    return fixed_text
