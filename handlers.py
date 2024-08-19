@@ -165,7 +165,7 @@ async def cmd_create(msg: types.Message):
         add_groups(msg.chat.id, group_name, values)
         await msg.reply('группа создана')
 
-async def cmd_create(msg: types.Message):
+async def cmd_delete(msg: types.Message):
     command, text = msg.get_full_command()
     group_name = text
 
