@@ -43,6 +43,14 @@ def add_groups(chat_id, name, values):
     dump_json(path, g)
 
 
+def del_group(chat_id, name):
+    path = p(chat_id)
+    g = read_json(path)
+    if name in g:
+        del g[name]
+        dump_json(path, g)
+
+
 def random_bool(probability=0.5):
     return rnd.random() > (1-probability)
 

@@ -41,6 +41,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(force_restart, commands=['force_restart'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
+    dp.register_message_handler(cmd_delete, commands=['delete'])
     dp.register_message_handler(
         voice_listener, content_types=types.ContentTypes.VOICE)
     # dp.register_message_handler(
@@ -163,6 +164,14 @@ async def cmd_create(msg: types.Message):
     if len(group_name) and len(values):
         add_groups(msg.chat.id, group_name, values)
         await msg.reply('группа создана')
+
+async def cmd_create(msg: types.Message):
+    command, text = msg.get_full_command()
+    group_name = text
+
+    if len(group_name):
+        del_group(msg.chat.id, group_name)
+        await msg.reply('группа удалена')
 
 
 async def summarize_reply(msg: types.Message):
