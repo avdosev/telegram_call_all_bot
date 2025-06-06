@@ -37,6 +37,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(version_call, commands=['version'])
     dp.register_message_handler(logs_call, commands=['logs'])
     dp.register_message_handler(force_restart, commands=['force_restart'])
+    dp.register_message_handler(asr_video_command, commands=['video_text'])
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(cmd_delete, commands=['delete'])
@@ -354,6 +355,32 @@ async def video_listener(msg: types.Message):
         audio = await video_to_audio(video)
         text = await voice_transcribe.transcribe(audio, f"video:{logs_id}")
         await answer_message(msg, text)
+
+
+async def asr_video_command(msg: types.Message):
+    """Transcribe audio from replied video"""
+    if not msg.reply_to_message:
+        await msg.reply('Нужно ответить на сообщение с видео')
+        return
+
+    reply = msg.reply_to_message
+
+    if reply.content_type not in {'video', 'video_note'}:
+        await msg.reply('Нужно ответить на сообщение с видео или видео заметкой')
+        return
+
+    async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
+        video = io.BytesIO()
+        if reply.content_type == 'video_note':
+            await reply.video_note.download(destination_file=video, timeout=180)
+            logs_id = reply.video_note.file_id
+        else:
+            await reply.video.download(destination_file=video, timeout=180)
+            logs_id = reply.video.file_id
+
+        audio = await video_to_audio(video)
+        text = await voice_transcribe.transcribe(audio, f"video:{logs_id}")
+        await answer_message(msg, text, user_prefix=False)
 async def answer_message(msg, text, user_prefix=True):
     if user_prefix:
         prefix = '<b>' + msg.from_user.username + '</b>:\n'
