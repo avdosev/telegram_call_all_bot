@@ -65,14 +65,6 @@ async def bot_help(msg: types.Message):
         '/ask \- спросить',
         '/ocr \- распознать текст на картинке',
     ]
-    groups = get_groups(msg.chat.id)
-    res = []
-    for key, items in sorted(groups.items(), key=lambda x: x[0]):
-        res.append('/'+key + ' \- Призвать ' +
-                   group_to_str(items, not_call=True, sep=', '))
-
-    text += res
-
     await msg.reply('\n'.join(text))
 
 
