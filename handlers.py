@@ -4,6 +4,7 @@ from aiogram.dispatcher.filters import CommandStart, CommandHelp
 from action_sender import ChatActionSender
 from helpers import *
 from video_helper import *
+from image_ocr import ocr_image
 import subprocess
 from aiogram.types import ParseMode
 import operator
@@ -41,6 +42,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(cmd_groups, commands=['groups'])
     dp.register_message_handler(cmd_create, commands=['create'])
     dp.register_message_handler(cmd_delete, commands=['delete'])
+    dp.register_message_handler(ocr_call, commands=['ocr'])
     dp.register_message_handler(
         voice_listener, content_types=types.ContentTypes.VOICE)
     # dp.register_message_handler(
@@ -59,6 +61,7 @@ async def bot_help(msg: types.Message):
         '/create \- создать группу',
         '/version \- узнать версию',
         '/ask \- спросить',
+        '/ocr \- распознать текст на картинке',
     ]
     groups = get_groups(msg.chat.id)
     res = []
@@ -302,6 +305,7 @@ async def do_call_group(msg: types.Message, group):
 def exclude_msg_author(group, user: types.User):
     return [username for username in group if user.username != username]
 
+
 async def ask_call(msg: types.Message):
     if not allow_openai:
         await msg.reply('пока не ебу')
@@ -357,6 +361,26 @@ async def video_listener(msg: types.Message):
         await answer_message(msg, text)
 
 
+
+async def ocr_call(msg: types.Message):
+    target = msg
+    if not msg.photo and msg.reply_to_message and msg.reply_to_message.photo:
+        target = msg.reply_to_message
+
+    if not target.photo:
+        await msg.reply('Пришли фото или ответь на фото с этой командой')
+        return
+
+    async with ChatActionSender.typing(bot=msg.bot, chat_id=msg.chat.id):
+        buf = io.BytesIO()
+        await target.photo[-1].download(destination_file=buf, timeout=180)
+        text = await ocr_image(buf.getvalue())
+        if not text:
+            text = 'текст не обнаружен'
+
+    await answer_message(msg, text, user_prefix=False)
+
+
 async def asr_video_command(msg: types.Message):
     """Transcribe audio from replied video"""
     if not msg.reply_to_message:
@@ -381,6 +405,8 @@ async def asr_video_command(msg: types.Message):
         audio = await video_to_audio(video)
         text = await voice_transcribe.transcribe(audio, f"video:{logs_id}")
         await answer_message(msg, text, user_prefix=False)
+
+
 async def answer_message(msg, text, user_prefix=True):
     if user_prefix:
         prefix = '<b>' + msg.from_user.username + '</b>:\n'
