@@ -238,7 +238,8 @@ async def message_listener(msg: types.Message):
 
     groups_to_call = []
     for group_name in groups:
-        if ('@'+group_name.lower()) in msg_text:
+        lower_group = group_name.lower()
+        if ('@' + lower_group) in msg_text or ('#' + lower_group) in msg_text:
             groups_to_call.append(group_name)
 
 
@@ -260,7 +261,7 @@ async def message_listener(msg: types.Message):
 
 def string_contains_normal_words(s: str):
     """
-    Проверяем наличие слов, не начинающихся с @
+    Проверяем наличие слов, не начинающихся с @ или #
     
     ```py
     s = "Это пример строки с @username и обычными словами"
@@ -276,7 +277,7 @@ def string_contains_normal_words(s: str):
     print(s, ':', check_string(s))
     ```
     """
-    match = re.search(r'(?<!@)\b\w+', s)
+    match = re.search(r'(?<![@#])\b\w+', s)
     return bool(match)
 
 
