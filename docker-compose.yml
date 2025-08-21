@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  bot:
+    build: .
+    volumes:
+      - ./bot_key:/app/bot_key:ro
+      - ./data:/app/data
+      - ./sensitive_info:/app/sensitive_info:ro
+    restart: unless-stopped
+    command: python bot.py

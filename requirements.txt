@@ -1,0 +1,7 @@
+aiohttp
+aiogram
+openai
+ffmpeg
+faster-whisper
+pillow
+pytesseract
