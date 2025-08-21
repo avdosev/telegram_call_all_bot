@@ -6,17 +6,22 @@ import os
 import logging
 from helpers import read_file
 
-def setup_logging():
-    logging.basicConfig(filename='bot_logs.txt',
-                    filemode='a',
-                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
-                    level=logging.INFO)
+
+def setup_logging() -> None:
+    """Configure application-wide logging."""
+    logging.basicConfig(
+        filename='bot_logs.txt',
+        filemode='a',
+        format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+        datefmt='%H:%M:%S',
+        level=logging.INFO,
+    )
 
 
-
-async def on_startup(dp: Dispatcher):
+async def on_startup(dp: Dispatcher) -> None:
+    """Initialize bot handlers on startup."""
     import handlers
+
     handlers.setup(dp)
 
 if __name__ == '__main__':

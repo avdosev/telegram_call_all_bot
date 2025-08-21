@@ -1,3 +1,5 @@
+from typing import Any, Optional, Sequence
+
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from transformers import pipeline
@@ -5,8 +7,11 @@ from transformers import pipeline
 model = SentenceTransformer('cointegrated/rubert-tiny2')
 
 
-def split_to_paragraphs(sentences, timecodes=None):
-    """
+def split_to_paragraphs(
+    sentences: Sequence[str], timecodes: Optional[Sequence[Any]] = None
+) -> list[str]:
+    """Split *sentences* into paragraphs using semantic similarity.
+
     See: https://gist.github.com/avdosev/4f67d066806d9c32a4238ab24c4a8760
     """
     # Векторизуем, и склеиваем два массива в один
@@ -45,14 +50,17 @@ def split_to_paragraphs(sentences, timecodes=None):
     return paragraphs
 
 
-error_fixing_pipe = pipeline("text2text-generation", model="ai-forever/FRED-T5-1.7B-spell-distilled-100m")
+error_fixing_pipe = pipeline(
+    "text2text-generation", model="ai-forever/FRED-T5-1.7B-spell-distilled-100m"
+)
 
 
-def fix_errors(text):
+def fix_errors(text: str) -> str:
+    """Run spelling correction on *text* using a transformer model."""
     if len(text) < 1000:
-        return error_fixing_pipe(text)[0]['generated_text'] 
+        return error_fixing_pipe(text)[0]['generated_text']
 
-    paragraphs = text.split('\n\n')
+    paragraphs = text.split("\n\n")
 
     fixed_paragraphs = []
 
@@ -63,12 +71,13 @@ def fix_errors(text):
             fixed = paragpaph
 
         fixed_paragraphs.append(fixed)
-    
-    return '\n\n'.join(fixed_paragraphs)
+
+    return "\n\n".join(fixed_paragraphs)
 
 
-def timecode_to_text(time: float):
+def timecode_to_text(time: float) -> str:
+    """Format *time* in seconds as ``MM:SS`` string."""
     minutes = int(time // 60)
     seconds = int(time % 60)
-    
+
     return f"{minutes:02}:{seconds:02}"

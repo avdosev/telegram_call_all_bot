@@ -1,14 +1,17 @@
-import uuid
-import os
 import io
 import logging
+import os
+import uuid
+from typing import Optional
+
 from ffmpeg.asyncio import FFmpeg
 
 # предварительная инициализация
 os.makedirs('tmp', exist_ok=True)
 
-async def video_to_audio(video: io.BytesIO):
 
+async def video_to_audio(video: io.BytesIO) -> Optional[io.BytesIO]:
+    """Convert *video* bytes to a WAV audio stream."""
     logging.info("starting to convert video...")
 
     video_tmp_filename = f'tmp/{uuid.uuid1()}'
@@ -27,13 +30,14 @@ async def video_to_audio(video: io.BytesIO):
             f="wav",
         )
     )
-    
+
+    audio: Optional[io.BytesIO] = None
     try:
         audio = io.BytesIO(await ffmpeg.execute())
         logging.info("video converted")
-    except:
+    except Exception:
         logging.info("video not converted")
     finally:
         os.remove(video_tmp_filename)
-    
+
     return audio
